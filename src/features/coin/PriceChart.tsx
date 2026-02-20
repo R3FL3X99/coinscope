@@ -54,14 +54,14 @@ export function PriceChart({ data, days, direction = 'flat' }: PriceChartProps) 
 
   if (data.length === 0) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50">
+      <div className="flex h-[320px] items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 md:h-[340px]">
         <p className="text-sm text-slate-500">No chart data available.</p>
       </div>
     )
   }
 
   return (
-    <div className="h-72 w-full">
+    <div className="h-[320px] w-full md:h-[340px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 16, right: 8, left: 0, bottom: 8 }}>
           <CartesianGrid stroke="#e2e8f0" strokeDasharray="4 4" vertical={false} />
@@ -82,7 +82,7 @@ export function PriceChart({ data, days, direction = 'flat' }: PriceChartProps) 
             tick={{ fill: '#64748b', fontSize: 12 }}
           />
           <Tooltip content={<PriceChartTooltip days={days} />} />
-          <Line type="monotone" dataKey="price" stroke={lineColor} strokeWidth={2.25} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="price" stroke={lineColor} strokeWidth={2.6} dot={false} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

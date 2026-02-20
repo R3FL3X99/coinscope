@@ -4,6 +4,14 @@ export type CoinDetails = {
   symbol: string
   description?: string
   homepage?: string
+  market_data: {
+    ath?: { usd?: number | null }
+    atl?: { usd?: number | null }
+    ath_date?: { usd?: string | null }
+    atl_date?: { usd?: string | null }
+  }
+  sentiment_votes_up_percentage?: number | null
+  sentiment_votes_down_percentage?: number | null
   marketData: {
     currentPriceUsd?: number
     priceChange24h?: number

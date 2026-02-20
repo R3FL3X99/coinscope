@@ -18,7 +18,7 @@ export function TimeframeTabs({ value, onChange }: TimeframeTabsProps) {
     <div
       role="tablist"
       aria-label="Chart timeframe"
-      className="inline-flex w-full max-w-full overflow-x-auto rounded-full border border-slate-200 bg-slate-100/70 p-1 sm:w-auto"
+      className="inline-flex w-full max-w-full overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-1 sm:w-auto"
     >
       {timeframeOptions.map((option) => {
         const isActive = option.days === value
@@ -30,10 +30,10 @@ export function TimeframeTabs({ value, onChange }: TimeframeTabsProps) {
             aria-selected={isActive}
             onClick={() => onChange(option.days)}
             className={cn(
-              'min-w-[3.5rem] rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500 sm:text-sm',
+              'min-w-[3.5rem] rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-indigo-200',
               isActive
-                ? 'bg-slate-800/90 text-white shadow-sm'
-                : 'text-slate-600 hover:bg-white hover:text-slate-900',
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-600 hover:text-slate-900',
             )}
           >
             {option.label}

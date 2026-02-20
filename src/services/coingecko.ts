@@ -28,7 +28,13 @@ type CoinDetailsResponse = {
     market_cap?: { usd?: number }
     total_volume?: { usd?: number }
     circulating_supply?: number
+    ath?: { usd?: number | null }
+    atl?: { usd?: number | null }
+    ath_date?: { usd?: string | null }
+    atl_date?: { usd?: string | null }
   }
+  sentiment_votes_up_percentage?: number | null
+  sentiment_votes_down_percentage?: number | null
 }
 
 type CoinMarketChartResponse = {
@@ -57,6 +63,14 @@ export async function getCoinDetails(id: string, signal?: AbortSignal): Promise<
     symbol: data.symbol ?? '',
     description: data.description?.en,
     homepage: data.links?.homepage?.[0] || undefined,
+    market_data: {
+      ath: { usd: data.market_data?.ath?.usd ?? null },
+      atl: { usd: data.market_data?.atl?.usd ?? null },
+      ath_date: { usd: data.market_data?.ath_date?.usd ?? null },
+      atl_date: { usd: data.market_data?.atl_date?.usd ?? null },
+    },
+    sentiment_votes_up_percentage: data.sentiment_votes_up_percentage ?? null,
+    sentiment_votes_down_percentage: data.sentiment_votes_down_percentage ?? null,
     marketData: {
       currentPriceUsd: data.market_data?.current_price?.usd,
       priceChange24h: data.market_data?.price_change_percentage_24h,

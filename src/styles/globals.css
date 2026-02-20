@@ -14,6 +14,6 @@
   }
 
   body {
-    @apply overflow-x-hidden bg-slate-50 text-slate-900 antialiased;
+    @apply overflow-x-hidden bg-slate-100 text-slate-900 antialiased;
   }
 }

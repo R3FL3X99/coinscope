@@ -72,7 +72,8 @@ export function WatchlistTable({ rows, onRemove }: WatchlistTableProps) {
                   event.stopPropagation()
                   onRemove(row.id)
                 }}
-                className="w-full border border-rose-200 bg-white text-rose-700 hover:bg-rose-50 hover:text-rose-800 focus-visible:outline-rose-600 sm:w-auto"
+                variant="danger"
+                className="w-full sm:w-auto"
               >
                 Remove
               </Button>

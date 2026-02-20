@@ -10,7 +10,7 @@ import { useCoinMarketChart } from '../features/coin/useCoinMarketChart'
 import { WatchlistButton } from '../features/watchlist/WatchlistButton'
 import type { WatchlistItem } from '../features/watchlist/types'
 import { ApiError } from '../services/http'
-import { formatNumber, formatPercent, formatUsd } from '../utils/format'
+import { formatNumber, formatPercent, formatShortDate, formatUsd } from '../utils/format'
 
 const kpiItems = ['Market Cap', '24h Volume', 'Circulating Supply', 'All-Time High', 'All-Time Low', 'Sentiment']
 
@@ -65,30 +65,30 @@ export function CoinDetails() {
     <section className="space-y-6">
       <header className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Coin</p>
-          <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Coin</p>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {data?.name ?? id ?? 'unknown-coin'}{' '}
-            <span className="align-middle text-base font-semibold uppercase text-slate-500 sm:text-lg">
+            <span className="align-middle text-sm font-medium uppercase text-slate-500 sm:text-base">
               ({data?.symbol ?? ''})
             </span>
           </h2>
         </div>
-        <div className="text-left sm:min-w-[15rem] sm:text-right">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Price</p>
-          <p className="mt-1 text-3xl font-bold leading-none text-slate-900 sm:text-4xl">
+        <div className="text-left sm:min-w-[14rem] sm:text-right">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Price</p>
+          <p className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
             {formatUsd(data?.marketData.currentPriceUsd)}
           </p>
-          <p
+          <span
             className={
               typeof data?.marketData.priceChange24h === 'number'
                 ? data.marketData.priceChange24h >= 0
-                  ? 'mt-2 text-sm font-semibold text-emerald-600'
-                  : 'mt-2 text-sm font-semibold text-rose-600'
-                : 'mt-2 text-sm text-slate-500'
+                  ? 'mt-2 inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700'
+                  : 'mt-2 inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700'
+                : 'mt-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600'
             }
           >
             24h: {formatPercent(data?.marketData.priceChange24h)}
-          </p>
+          </span>
           <WatchlistButton coin={watchlistCoin} />
         </div>
       </header>
@@ -109,8 +109,46 @@ export function CoinDetails() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kpiItems.map((item) => (
           <Card key={item}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item}</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{liveKpis[item] ?? '--'}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{item}</p>
+            {item === 'All-Time High' ? (
+              <>
+                <p className="mt-2 text-2xl font-semibold text-slate-900">
+                  {formatUsd(data?.market_data?.ath?.usd ?? undefined)}
+                </p>
+                {formatShortDate(data?.market_data?.ath_date?.usd) ? (
+                  <p className="mt-1 text-xs text-slate-500">{formatShortDate(data?.market_data?.ath_date?.usd)}</p>
+                ) : null}
+              </>
+            ) : null}
+
+            {item === 'All-Time Low' ? (
+              <>
+                <p className="mt-2 text-2xl font-semibold text-slate-900">
+                  {formatUsd(data?.market_data?.atl?.usd ?? undefined)}
+                </p>
+                {formatShortDate(data?.market_data?.atl_date?.usd) ? (
+                  <p className="mt-1 text-xs text-slate-500">{formatShortDate(data?.market_data?.atl_date?.usd)}</p>
+                ) : null}
+              </>
+            ) : null}
+
+            {item === 'Sentiment' ? (
+              <>
+                {data?.sentiment_votes_up_percentage == null && data?.sentiment_votes_down_percentage == null ? (
+                  <p className="mt-2 text-2xl font-semibold text-slate-900">N/A</p>
+                ) : (
+                  <p className="mt-2 text-sm font-medium">
+                    <span className="text-emerald-700">Up {formatPercent(data?.sentiment_votes_up_percentage ?? undefined)}</span>{' '}
+                    <span className="text-slate-400">/</span>{' '}
+                    <span className="text-rose-700">Down {formatPercent(data?.sentiment_votes_down_percentage ?? undefined)}</span>
+                  </p>
+                )}
+              </>
+            ) : null}
+
+            {item !== 'All-Time High' && item !== 'All-Time Low' && item !== 'Sentiment' ? (
+              <p className="mt-2 text-2xl font-semibold text-slate-900">{liveKpis[item] ?? '--'}</p>
+            ) : null}
           </Card>
         ))}
       </div>
@@ -119,24 +157,26 @@ export function CoinDetails() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-base font-semibold text-slate-900">Price Chart</h3>
-            <p
+            <span
               className={
                 trend?.direction === 'up'
-                  ? 'mt-1 text-sm font-medium text-emerald-600'
+                  ? 'mt-1 inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700'
                   : trend?.direction === 'down'
-                    ? 'mt-1 text-sm font-medium text-rose-600'
-                    : 'mt-1 text-sm font-medium text-slate-500'
+                    ? 'mt-1 inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700'
+                    : 'mt-1 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600'
               }
             >
               {trend
                 ? `${trend.direction === 'up' ? 'Uptrend' : trend.direction === 'down' ? 'Downtrend' : 'Flat'} ${trend.percentChange > 0 ? '+' : ''}${formatPercent(trend.percentChange)}`
                 : 'Trend unavailable'}
-            </p>
+            </span>
           </div>
           <TimeframeTabs value={selectedDays} onChange={setSelectedDays} />
         </div>
 
-        {isChartLoading ? <div className="h-72 w-full animate-pulse rounded-lg bg-slate-100" aria-hidden="true" /> : null}
+        {isChartLoading ? (
+          <div className="h-[320px] w-full animate-pulse rounded-lg bg-slate-100 md:h-[340px]" aria-hidden="true" />
+        ) : null}
 
         {isChartError ? (
           <div className="space-y-3 rounded-lg border border-rose-100 bg-rose-50 p-4">

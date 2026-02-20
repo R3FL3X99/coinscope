@@ -32,11 +32,7 @@ export function WatchlistButton({ coin }: WatchlistButtonProps) {
           toggle(coin)
           setFeedback(isSaved ? 'Removed' : 'Saved')
         }}
-        className={
-          isSaved
-            ? 'border border-rose-200 bg-white text-rose-700 hover:bg-rose-50 hover:text-rose-800 focus-visible:outline-rose-600'
-            : 'bg-slate-800 hover:bg-slate-700'
-        }
+        variant={isSaved ? 'danger' : 'primary'}
       >
         {isSaved ? 'Remove from Watchlist' : 'Add to Watchlist'}
       </Button>

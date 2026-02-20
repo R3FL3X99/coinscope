@@ -41,6 +41,26 @@ type CoinMarketChartResponse = {
   prices?: Array<[number, number]>
 }
 
+type TopMarketResponseItem = {
+  id?: string
+  name?: string
+  symbol?: string
+  image?: string
+  current_price?: number
+  price_change_percentage_24h?: number
+  market_cap?: number
+}
+
+export type TopMarketCoin = {
+  id: string
+  name: string
+  symbol: string
+  image: string
+  current_price: number
+  price_change_percentage_24h: number
+  market_cap: number
+}
+
 export async function searchCoins(query: string, signal?: AbortSignal): Promise<CoinSearchResult[]> {
   const data = await httpGet<SearchResponse>(`/search?query=${encodeURIComponent(query)}`, { signal })
 
@@ -105,4 +125,23 @@ export async function getSimplePrices(ids: string[], signal?: AbortSignal): Prom
     `/simple/price?ids=${idsParam}&vs_currencies=usd&include_24hr_change=true`,
     { signal },
   )
+}
+
+export async function getTopMarkets(signal?: AbortSignal): Promise<TopMarketCoin[]> {
+  const data = await httpGet<TopMarketResponseItem[]>(
+    '/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
+    { signal },
+  )
+
+  return (data ?? [])
+    .filter((coin) => coin.id && coin.name && coin.symbol)
+    .map((coin) => ({
+      id: coin.id as string,
+      name: coin.name as string,
+      symbol: coin.symbol as string,
+      image: coin.image ?? '',
+      current_price: coin.current_price ?? 0,
+      price_change_percentage_24h: coin.price_change_percentage_24h ?? 0,
+      market_cap: coin.market_cap ?? 0,
+    }))
 }
